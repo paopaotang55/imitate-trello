@@ -1,13 +1,23 @@
 import React, { Component } from 'react'
-import {Button} from 'antd'
-import './app.less'
+import { BrowserRouter as Router, Switch, Route, Redirect} from 'react-router-dom'
+
+import Login from './pages/login/login'
+import Register from './pages/register/register'
+import Board from './pages/board/board'
+import Container from './pages/container/container'
 
 export default class App extends Component {
     render() {
         return (
-            <div>
-                <Button type='primary'>버튼</Button>
-            </div>
+            <Router>
+                <Switch>
+                    <Route path='/login' component={Login}/>
+                    <Route path='/register' component={Register}/>
+                    <Route exact path='/board' component={Board}/>
+                    <Route path='/board/:id' component={Container}/>
+                    <Redirect to="/login"/>
+                </Switch>
+            </Router>
         )
     }
 }
