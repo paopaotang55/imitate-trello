@@ -1,24 +1,23 @@
 import React, { Component } from 'react'
 import { Form, Icon, Input, Button, message } from 'antd'
-import { Link } from 'react-router-dom'
-import { reqRegister } from '../../api'
-import './register.less'
+import { reqEditPassword } from '../../api'
+import './index.less'
 
-class RegisterForm extends Component {
+class EditPassword extends Component {
     handleSubmit = e => {
       e.preventDefault();
       this.props.form.validateFields( async (err, values) => {
         if (!err) {
-          if(values.password === values.password2){
-            let data = await reqRegister(values)
-            if(data.code === 0){
-              localStorage.setItem('token', data.token);
+          if(values.password2 === values.password3){
+            let result = await reqEditPassword(values)
+            if(result.code === 0){
               this.props.history.replace('/board')
+              message.success(result.message)
             } else {
-              message.error(data.message)
+              message.error(result.message)
             }
           } else {
-            message.error('두번 비밀번호 일치하지 않음')
+            message.error('새 비밀번호 일치하지 않음')
           }
         }
       });
@@ -43,28 +42,13 @@ class RegisterForm extends Component {
         <Form onSubmit={this.handleSubmit} className="login-form registerForm">
           <h3>트&nbsp;&nbsp;렐&nbsp;&nbsp;로</h3>
           <Form.Item>
-            {getFieldDecorator('username', {  
-              rules: [
-                { required: true, whitespace: true, message: '아이디를 입력하세요!'},
-                { min: 5, message: '5개 자리 넘어야 합니다!'},
-                { max: 15, message: '15개 자리 넘으면 안됩니다!'},
-                { pattern: /^[A-z0-9]+$/, message: '영문 혹은 수자로 이루어져야합니다!'}
-              ],
-            })(
-              <Input
-                prefix={<Icon type="user" style={{ color: 'rgba(0,0,0,.25)' }} />}
-                placeholder="아이디"
-              />,
-            )}
-          </Form.Item>
-          <Form.Item>
             {getFieldDecorator('password', {
               rules: [ {validator: this.handleConfirmPassword} ],
             })( 
               <Input
                 prefix={<Icon type="lock" style={{ color: 'rgba(0,0,0,.25)' }} />}
                 type="password"
-                placeholder="비밀번호"
+                placeholder="예전 비밀번호"
               />,
             )}
           </Form.Item>
@@ -75,18 +59,24 @@ class RegisterForm extends Component {
               <Input
                 prefix={<Icon type="lock" style={{ color: 'rgba(0,0,0,.25)' }} />}
                 type="password"
-                placeholder="비밀번호확인"
+                placeholder="새 비밀번호"
+              />,
+            )}
+          </Form.Item>
+          <Form.Item>
+            {getFieldDecorator('password3', {
+              rules: [ {validator: this.handleConfirmPassword} ],
+            })( 
+              <Input
+                prefix={<Icon type="lock" style={{ color: 'rgba(0,0,0,.25)' }} />}
+                type="password"
+                placeholder="새 비밀번호 확인"
               />,
             )}
           </Form.Item>
           <Form.Item>
             <Button type="primary" htmlType="submit" className="login-form-button">
-              회원가입
-            </Button>
-          </Form.Item>
-          <Form.Item>
-            <Button type="primary" className="login-form-button">
-              <Link to='login'>로그인&nbsp;하러가기</Link> 
+              비밀번호 수정
             </Button>
           </Form.Item>
         </Form>
@@ -94,4 +84,4 @@ class RegisterForm extends Component {
     }
   }
   
-export default Form.create({})(RegisterForm);
+export default Form.create({})(EditPassword);

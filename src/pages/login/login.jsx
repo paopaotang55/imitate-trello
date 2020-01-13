@@ -1,14 +1,21 @@
 import React, { Component } from 'react'
-import { Form, Icon, Input, Button } from 'antd'
+import { Form, Icon, Input, Button, message } from 'antd'
 import { Link } from 'react-router-dom'
+import { reqLogin } from '../../api'
 import './login.less'
 
 class LoginForm extends Component {
     handleSubmit = e => {
       e.preventDefault();
-      this.props.form.validateFields((err, values) => {
+      this.props.form.validateFields( async (err, values) => {
         if (!err) {
-          console.log('Received values of form: ', values);
+          let data = await reqLogin(values)
+          if(data.code === 0){
+            localStorage.setItem('token', data.token);
+            this.props.history.replace('/board')
+          } else {
+            message.error(data.message)
+         }
         }
       });
     };
